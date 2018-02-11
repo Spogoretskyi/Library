@@ -1,31 +1,127 @@
-﻿@{
-    ViewBag.Title = "Home Page";
+﻿@model PagedList.IPagedList<Library.Models.DbLayer.Book>
+
+@{
+        ViewBag.Title = "Books:";
 }
 
-<div class="jumbotron">
-    <h1>ASP.NET</h1>
-    <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-    <p><a href="https://asp.net" class="btn btn-primary btn-lg">Learn more &raquo;</a></p>
-</div>
+<h2 id="hbooks">Books</h2> 
+<hr>
 
-<div class="row">
-    <div class="col-md-4">
-        <h2>Getting started</h2>
-        <p>
-            ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-            enables a clean separation of concerns and gives you full control over markup
-            for enjoyable, agile development.
-        </p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Get more libraries</h2>
-        <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-    </div>
-    <div class="col-md-4">
-        <h2>Web Hosting</h2>
-        <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-        <p><a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-    </div>
-</div>
+@using (Html.BeginForm())
+{
+    <div id="grp">
+    <form>
+        <div class="form-row justify-content-center">
+            <div class="form-group col-sm-2">
+                <h3 id="find" class="text-muted">Find:</h3>
+            </div>
+            <div class="form-group col-md-4">
+                @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { @class = "form-control" }) &nbsp;
+            </div>
+            <div id="txb" class="form-group col-sm-2">
+                <input id="search" type="submit" value="Search" class="btn btn btn-md" />
+            </div>
+                </div>
+                </form>
+                  </div>
+                     }
+                    <table id="maintbl" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>
+                                    @Html.ActionLink("Book", "Index", new { sortOrder = ViewBag.NameSortParm, currentFilter = ViewBag.CurrentFilter })
+                                </th>
+                                <th>
+                                    @Html.ActionLink("Author", "Index", new { sortOrder = ViewBag.AuthorSortParm, currentFilter = ViewBag.CurrentFilter })
+                                </th>
+                                <th>
+                                    @Html.ActionLink("ISBN", "Index", new { sortOrder = ViewBag.ISBNSortParm, currentFilter = ViewBag.CurrentFilter })
+                                </th>
+                                <th>
+                                    @Html.ActionLink("Publisher", "Index", new { sortOrder = ViewBag.PublisherSortParm, currentFilter = ViewBag.CurrentFilter })
+                                </th>
+                                <th>
+                                    @Html.ActionLink("Year", "Index", new { sortOrder = ViewBag.YearSortParm, currentFilter = ViewBag.CurrentFilter })
+                                </th>
+                                <th>
+                                    @Html.ActionLink("Country", "Index", new { sortOrder = ViewBag.CountrySortParm, currentFilter = ViewBag.CurrentFilter })
+                                </th>
+                                <th>
+                                    <span class="text-primary">Edit</span>
+                                </th>
+                                <th>
+                                    <span class="text-primary">Delete</span>
+                                </th>
+                            </tr>
+                        </thead>
+                        @foreach (var item in Model)
+                         {
+                            <tr>
+                                <td id="tbl">
+                                    @Html.DisplayFor(modelItem => item.Book_Name)
+                                </td>
+                                <td id="tbl">
+                                    @Html.DisplayFor(modelItem => item.Author)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.ISBN)
+                                </td>
+                                <td id="tbl">
+                                    @Html.DisplayFor(modelItem => item.Publisher)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Year)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Country)
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Edit", "Edit", new { id = item.Book_Id }, new { @class = "btn btn-primary btn-sm" })
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Delete", "Delete", new { id = item.Book_Id }, new { @class = "btn btn-danger btn-sm mybtndeleteBook" })
+                                </td>
+                            </tr>
+                        }
+                    </table>
+                    <div id="crt" class="form-group col-sm-2">
+                        @Html.ActionLink("Create New", "Edit", null, new
+                           {
+                               Id = "BtnCreate",
+                               @class = "btn btn-info btn-sm"
+                           })
+                    </div>
+                    <div>
+                        Page @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber)
+                        of @Model.PageCount
+                        &nbsp;
+                        @if (Model.HasPreviousPage)
+                        {
+                            @Html.ActionLink("<<", "Index", new { page = 1, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter })
+                            @Html.Raw("&nbsp;");
+                            @Html.ActionLink("Prev", "Index", new { page = Model.PageNumber - 1, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter })
+                        }
+                        else
+                        {
+                            @:<<
+                            @Html.Raw("&nbsp;");
+                            @:Prev
+                }
+                        &nbsp;
+                        @if (Model.HasNextPage)
+                {
+                            @Html.ActionLink("Next", "Index", new { page = Model.PageNumber + 1, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter })
+                            @Html.Raw("&nbsp;");
+                            @Html.ActionLink(">>", "Index", new { page = Model.PageCount, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter })
+                        }
+                        else
+                        {
+                            @:Next
+                            @Html.Raw("&nbsp;")
+                            @:>>
+                }
+                    </div>
+                    @section Scripts
+                    {
+                    <script src="~/Scripts/scripts.js"></script>
+                    }
